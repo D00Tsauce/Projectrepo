@@ -8,63 +8,113 @@ from src.lane_detector import ADASLaneDetector
 st.set_page_config(page_title="ADAS ML Capstone Dashboard", layout="wide")
 # --- FRUTIGER AERO AESTHETIC SKIN INJECTION ---
 st.markdown("""
-    <style>
-    /* 1. Global Background: Classic Glossy Blue-to-Green Aurora Gradient */
+   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap');
+
+    /* 1. Base App Canvas & Moving Aurora Gradient */
     .stApp {
-        background: linear-gradient(135deg, #0072ff 0%, #00c6ff 50%, #7bed9f 100%);
-        background-attachment: fixed;
+        background: linear-gradient(-45deg, #0052d4, #4364f7, #6fb1fc, #7bed9f);
+        background-size: 400% 400%;
+        animation: auroraAnimation 15s ease infinite;
         color: #ffffff;
+        font-family: 'Outfit', sans-serif !important;
+    }
+    @keyframes auroraAnimation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
-    /* 2. Windows Aero Glassmorphism Sidebar */
+    /* 2. Windows Aero Glassmorphism Containers */
+    [data-testid="stSidebar"], .aero-card {
+        background: rgba(255, 255, 255, 0.12) !important;
+        backdrop-filter: blur(20px) saturate(200%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 24px !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 114, 255, 0.2) !important;
+    }
+    
     [data-testid="stSidebar"] {
-        background: rgba(255, 255, 255, 0.15) !important;
-        backdrop-filter: blur(12px) saturate(180%);
-        -webkit-backdrop-filter: blur(12px) saturate(180%);
-        border-right: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 0px 24px 24px 0px !important;
+        padding-top: 2rem;
     }
 
-    /* 3. Sleek Glass Cards for Main Panels and Boxes */
-    div.stAlert, div[data-testid="stMarkdownContainer"] {
-        color: #1e272e;
+    /* 3. Glossy 3D Windows Vista/Wii Styled Widgets */
+    div.stAlert {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        border-radius: 16px !important;
+        backdrop-filter: blur(10px);
     }
-    
-    /* Target the main video processing bounding block */
-    .element-container {
-        border-radius: 16px;
-    }
-
-    /* 4. Glossy UI Buttons (Vista/Wii Style Hover Effects) */
-    div.stButton > button {
-        background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%), #2ed573 !important;
-        color: white !important;
-        border: 1px solid rgba(255,255,255,0.4) !important;
-        border-radius: 20px !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.15), inset 0 2px 2px rgba(255,255,255,0.5) !important;
-        text-shadow: 0px 1px 2px rgba(0,0,0,0.3);
-        transition: all 0.3s ease;
-    }
-    
-    div.stButton > button:hover {
-        background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0.15) 100%), #26af5f !important;
-        transform: scale(1.03);
-        box-shadow: 0 6px 20px rgba(46, 213, 115, 0.4) !important;
-    }
-
-    /* 5. Typography Customizations */
-    h1, h2, h3, h4, label {
+    div.stAlert p {
         color: #ffffff !important;
-        font-family: 'Segoe UI', -apple-system, sans-serif !important;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        font-weight: 600 !important;
+        font-weight: 600;
     }
-    
-    /* Make subheaders stand out with bright energy */
-    .stMarkdown p {
-        color: #f1f2f6;
+
+    /* 4. High-Gloss Interactive Buttons */
+    div.stButton > button {
+        background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 100%), #00ca4e !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.5) !important;
+        border-radius: 30px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 600 !important;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.6) !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    div.stButton > button:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 25px rgba(0, 202, 78, 0.4), inset 0 2px 4px rgba(255,255,255,0.8) !important;
+    }
+
+    /* 5. Custom Live ECE Metric Widgets (Vista-Style Sidebar HUD) */
+    .hud-metric {
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 14px;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-left: 4px solid #7bed9f;
+    }
+
+    /* 6. Titles & Accent Lighting */
+    h1, h2, h3 {
+        text-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        letter-spacing: -0.5px;
+    }
+            
+    /* High-Contrast Readability Outline Overrides */
+    [data-testid="stSidebar"] h4,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] small {
+        font-weight: 800 !important;
+        color: #ffffff !important;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 2px 5px rgba(0,0,0,0.9) !important;
     }
     </style>
 """, unsafe_allow_html=True)
+
+# Custom Frutiger Aero HUD Component in Sidebar
+st.sidebar.markdown("""
+    <div style='margin-top: 2rem; margin-bottom: 1rem;'>
+        <h4 style='color: white; font-weight: 800; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;'>📡 Telemetry Matrix</h4>
+        <div class='hud-metric' style='background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.25);'>
+            <small style='color: #ffffff; display:block; font-weight: 800; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;'>Core Engine Status</small>
+            <strong style='color: #7bed9f; font-weight: 800; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;'>🟢 Nominal (Active)</strong>
+        </div>
+        <div class='hud-metric' style='background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.25);'>
+            <small style='color: #ffffff; display:block; font-weight: 800; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;'>Processing Framework</small>
+            <strong style='color: #00c6ff; font-weight: 800; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;'>YOLOv8n + OpenCV Chain</strong>
+        </div>
+        <div class='hud-metric' style='background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.25);'>
+            <small style='color: #ffffff; display:block; font-weight: 800; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;'>Target Hardware Profile</small>
+            <strong style='color: #ffb8b8; font-weight: 800; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;'>Edge-CPU Realtime Array</strong>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
+
 # --- END OF SKIN INJECTION ---
 
 st.title("🚗 Advanced Driver Assistance System (ADAS) Portal")
